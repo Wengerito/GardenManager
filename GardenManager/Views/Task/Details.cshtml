@@ -1,0 +1,42 @@
+﻿@model GardenManager.Models.t_tache
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>t_tache</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.tacId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.tacId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.tacName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.tacName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.tacDetails)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.tacDetails)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

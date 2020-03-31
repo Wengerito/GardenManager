@@ -1,0 +1,16 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Jardins</h2>
+
+<p>Sélectionner ou créer un nouveau jardin</p>
+
+<label>Nom du jardin</label><div id="gardensContainer">@Html.Partial("gardensList")</div>
+<div>@Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary" })</div>
+
+
+
+<div id="currentGarden">
+
+</div>

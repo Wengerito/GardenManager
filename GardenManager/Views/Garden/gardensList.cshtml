@@ -1,0 +1,265 @@
+﻿@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/moment")
+<script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+<script>
+    $(document).ready(function () {
+        // Get the data
+        var gardenRequest = new XMLHttpRequest();
+        gardenRequest.open('GET', 'Garden/gardensList');
+        gardenRequest.onload = function () {
+            if (gardenRequest.status >= 200 && gardenRequest.status < 400) {
+                var data = JSON.parse(gardenRequest.responseText);
+                createHTML(data);
+            } else {
+                console.log("erreur JSON:" + gardenRequest.status);
+                createHTMLerror();
+            }
+        };
+        gardenRequest.onerror = function () {
+            console.log("connexion erreur");
+        };
+        gardenRequest.send();
+
+        // Error message
+        function createHTMLerror() {
+            var gardensContainer = document.getElementById("gardensContainer");
+            gardensContainer.innerHTML = "Oupss... try to reload";
+        }
+        // Generate HTML with the data (dropdownlist)
+        function createHTML(gardensData) {
+            var rawTemplate = document.getElementById("gardensDropDownTemplate").innerHTML;
+            var compiledTemplate = Handlebars.compile(rawTemplate);
+            var ourGeneratedHTML = compiledTemplate(gardensData);
+
+            var gardensContainer = document.getElementById("gardensContainer");
+            gardensContainer.innerHTML += ourGeneratedHTML;
+
+            // DropDownList actions
+            var select = document.getElementById("gardens");
+            select.addEventListener("change", function () {
+                // Get the data
+                var tilesRequest = new XMLHttpRequest();
+                var params = "gardenId=" + select.value;
+                tilesRequest.open('GET', 'Garden/tilesList' + '?' + params);
+                tilesRequest.onload = function () {
+                    if (tilesRequest.status >= 200 && tilesRequest.status < 400) {
+                        var tilesData = JSON.parse(tilesRequest.responseText);
+                        loadGardenHTML(tilesData);
+                    } else {
+                        console.log("erreur JSON:" + tilesRequest.status);
+                    }
+                };
+                tilesRequest.onerror = function () {
+                    console.log("connexion erreur");
+                };
+                tilesRequest.send();
+
+            });
+        }
+        // Populate Garden
+        function loadGardenHTML(data) {
+            var rawTemplate = document.getElementById("gardenTemplate").innerHTML;
+            var compiledTemplate = Handlebars.compile(rawTemplate);
+            var ourGeneratedHTML = compiledTemplate(data);
+
+            var currentGarden = document.getElementById("currentGarden");
+            currentGarden.innerHTML = ourGeneratedHTML;
+            console.log(data);
+        }
+
+        // Handlebars helper to pass the name of the selected garden
+        Handlebars.registerHelper('selected', function () { return document.getElementById("gardens").value; });
+
+
+        // Handlebars helper to compare
+        Handlebars.registerHelper('ifeq', function (value, options) {
+            var selected = Handlebars.helpers.selected();
+            return (value == selected) ? options.fn(this) : '';
+        });
+
+        // Handlebars helper for date formating
+        Handlebars.registerHelper('formatDate', function (datetime) {
+            return moment(datetime).format("short");
+        });
+
+        Handlebars.registerHelper('formatGoodDate', function (datetime) {
+            startIndex = datetime.indexOf('(');
+            endIndex = datetime.indexOf(')');
+            var intDate = Number(datetime.substring(startIndex + 1, endIndex));
+            var formatedDate = new Date(intDate);
+        
+            return moment(formatedDate, 'DD-MM-YYYY', 'fr').format('l');
+        });
+
+        // Handlebars for getting next task
+        Handlebars.registerHelper('getNextTask', function (protArray) {
+            console.log(protArray[0]);
+            var intIndex = 0;
+            for (var i = 0; i < protArray.lenght; i++) {
+                startIndex = protArray[i].proDateTask.indexOf('(');
+                endIndex = protArray[i].proDateTask.indexOf(')');
+                var intDate = Number(protArray[i].proDateTask.substring(startIndex + 1, endIndex));
+                if (i==0) {
+                    var nextProDate = intDate;
+                }
+                else {
+                    if (intDate < nextProDate) {
+                        nextProDate = intDate;
+                        intIndex = i;
+                    }
+                }
+            }
+
+            return protArray[intIndex].proTask;
+        });
+
+    });
+</script>
+
+@*Template dropdown Handlebar*@
+<script id="gardensDropDownTemplate" type="text/x-handlebars-template">
+    <div>
+        <select id="gardens">
+            <option>Choisir un jardin</option>
+            {{#each .}}
+            <option value={{jarId}}>{{jarName}}</option>
+            {{/each}}
+        </select>
+    </div>
+</script>
+
+@*Template garden Handlebar*@
+<script id="gardenTemplate" type="text/x-handlebars-template">
+
+
+    <div id="currentGarden">
+
+        <h1>Jardin</h1>
+        <div id="garden">
+            <div class="tiles" id="0-0">
+                {{0.tilPlant}}<br />
+                Planifié le: {{formatGoodDate 0.tilDate}}
+                Prochaine tâche:{{getNextTask 0.t_protocole}}<br />
+                {{#each 0.t_protocole}}
+                {{#if proToDo}}
+                <input type="button">Valider
+                {{proTask}}<br />
+                {{^}}
+                Prévisions:
+                {{proTask}} le {{formatGoodDate proDateTask}}<br />
+                {{/if}}
+                {{/each}}
+
+            </div>
+            <div class="tiles" id="0-1">
+                {{1.tilPlant}}<br />
+                Planté le: {{formatGoodDate 1.tilDate}}<br />
+                Prochaine tâche:{{getNextTask 1.t_protocole}}
+                {{#each 1.t_protocole}}
+                {{#if proToDo}}
+                <input type="button">Valider
+                {{proTask}}<br />
+                {{^}}
+                {{proTask}} le {{formatGoodDate proDateTask}}<br />
+                {{/if}}
+                {{/each}}
+            </div>
+            <div class="tiles" id="0-2">
+                {{2.tilPlant}}<br />
+                Planté le: {{formatGoodDate 2.tilDate}}<br />
+                Prochaine tâche:{{getNextTask 2.t_protocole}}
+                {{#each 2.t_protocole}}
+                {{#if proToDo}}
+                <input type="button">Valider
+                {{proTask}}<br />
+                {{^}}
+                {{proTask}} le {{formatGoodDate proDateTask}}<br />
+                {{/if}}
+                {{/each}}
+            </div>
+            <div class="tiles" id="1-0">
+                {{3.tilPlant}}<br />
+                Planté le: {{formatGoodDate 3.tilDate}}<br />
+                Prochaine tâche:{{getNextTask 3.t_protocole}}
+                {{#each 3.t_protocole}}
+                {{#if proToDo}}
+                <input type="button">Valider
+                {{proTask}}<br />
+                {{^}}
+                {{proTask}} le {{formatGoodDate proDateTask}}<br />
+                {{/if}}
+                {{/each}}
+            </div>
+            <div class="tiles" id="1-1">
+                {{4.tilPlant}}<br />
+                Planté le: {{formatGoodDate 4.tilDate}}<br />
+                Prochaine tâche:{{getNextTask 4.t_protocole}}
+                {{#each 4.t_protocole}}
+                {{#if proToDo}}
+                <input type="button">Valider
+                {{proTask}}<br />
+                {{^}}
+                {{proTask}} le {{formatGoodDate proDateTask}}<br />
+                {{/if}}
+                {{/each}}
+            </div>
+            <div class="tiles" id="1-2">
+                {{5.tilPlant}}<br />
+                Planté le: {{formatGoodDate 5.tilDate}}<br />
+                Prochaine tâche:{{getNextTask 5.t_protocole}}
+                {{#each 5.t_protocole}}
+                {{#if proToDo}}
+                <input type="button">Valider
+                {{proTask}}<br />
+                {{^}}
+                {{proTask}} le {{formatGoodDate proDateTask}}<br />
+                {{/if}}
+                {{/each}}
+            </div>
+            <div class="tiles" id="2-0">
+                {{6.tilPlant}}<br />
+                Planté le: {{formatGoodDate 6.tilDate}}<br />
+                Prochaine tâche:{{getNextTask 6.t_protocole}}
+                {{#each 6.t_protocole}}
+                {{#if proToDo}}
+                <input type="button">Valider
+                {{proTask}}<br />
+                {{^}}
+                {{proTask}} le {{formatGoodDate proDateTask}}<br />
+                {{/if}}
+                {{/each}}
+            </div>
+            <div class="tiles" id="2-1">
+                {{7.tilPlant}}<br />
+                Planté le: {{formatGoodDate 7.tilDate}}<br />
+                Prochaine tâche:{{getNextTask 7.t_protocole}}
+                {{#each 7.t_protocole}}
+                {{#if proToDo}}
+                <input type="button">Valider
+                {{proTask}}<br />
+                {{^}}
+                {{proTask}} le {{formatGoodDate proDateTask}}<br />
+                {{/if}}
+                {{/each}}
+            </div>
+            <div class="tiles" id="2-2">
+                {{8.tilPlant}}<br />
+                Planté le: {{formatGoodDate 8.tilDate}}<br />
+                Prochaine tâche:{{getNextTask 8.t_protocole}}
+                {{#each 8.t_protocole}}
+                {{#if proToDo}}
+                <input type="button">Valider
+                {{proTask}}<br />
+                {{^}}
+                {{proTask}} le {{formatGoodDate proDateTask}}<br />
+                {{/if}}
+                {{/each}}
+            </div>
+        </div>
+
+
+
+    </div>
+
+
+</script>

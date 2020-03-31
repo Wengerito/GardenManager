@@ -1,0 +1,209 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="db_gmModel1.Store" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.7" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="t_jardin">
+          <Key>
+            <PropertyRef Name="jarId" />
+          </Key>
+          <Property Name="jarId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="jarName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="jarDisposition" Type="varchar" MaxLength="150" Nullable="false" />
+        </EntityType>
+        <EntityType Name="t_protocole">
+          <Key>
+            <PropertyRef Name="proId" />
+          </Key>
+          <Property Name="proId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="proTask" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="proDateTask" Type="date" Nullable="false" />
+          <Property Name="proIsDone" Type="bool" Nullable="false" />
+          <Property Name="proToDo" Type="bool" Nullable="false" />
+          <Property Name="tilId" Type="bigint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="t_tile">
+          <Key>
+            <PropertyRef Name="tilId" />
+          </Key>
+          <Property Name="tilId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="tilPlant" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="tilDate" Type="date" Nullable="false" />
+          <Property Name="tilPosition" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="jarId" Type="bigint" Nullable="false" />
+        </EntityType>
+        <Association Name="FKinclure_FK">
+          <End Role="t_jardin" Type="Self.t_jardin" Multiplicity="1" />
+          <End Role="t_tile" Type="Self.t_tile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="t_jardin">
+              <PropertyRef Name="jarId" />
+            </Principal>
+            <Dependent Role="t_tile">
+              <PropertyRef Name="jarId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKutiliser_FK">
+          <End Role="t_tile" Type="Self.t_tile" Multiplicity="1" />
+          <End Role="t_protocole" Type="Self.t_protocole" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="t_tile">
+              <PropertyRef Name="tilId" />
+            </Principal>
+            <Dependent Role="t_protocole">
+              <PropertyRef Name="tilId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="db_gmModel1StoreContainer">
+          <EntitySet Name="t_jardin" EntityType="Self.t_jardin" Schema="db_gm" store:Type="Tables" />
+          <EntitySet Name="t_protocole" EntityType="Self.t_protocole" Schema="db_gm" store:Type="Tables" />
+          <EntitySet Name="t_tile" EntityType="Self.t_tile" Schema="db_gm" store:Type="Tables" />
+          <AssociationSet Name="FKinclure_FK" Association="Self.FKinclure_FK">
+            <End Role="t_jardin" EntitySet="t_jardin" />
+            <End Role="t_tile" EntitySet="t_tile" />
+          </AssociationSet>
+          <AssociationSet Name="FKutiliser_FK" Association="Self.FKutiliser_FK">
+            <End Role="t_tile" EntitySet="t_tile" />
+            <End Role="t_protocole" EntitySet="t_protocole" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="db_gmModel1" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="t_jardin">
+          <Key>
+            <PropertyRef Name="jarId" />
+          </Key>
+          <Property Name="jarId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="jarName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="jarDisposition" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="t_tile" Relationship="Self.FKinclure_FK" FromRole="t_jardin" ToRole="t_tile" />
+        </EntityType>
+        <EntityType Name="t_protocole">
+          <Key>
+            <PropertyRef Name="proId" />
+          </Key>
+          <Property Name="proId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="proTask" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="proDateTask" Type="DateTime" Nullable="false" />
+          <Property Name="proIsDone" Type="Boolean" Nullable="false" />
+          <Property Name="proToDo" Type="Boolean" Nullable="false" />
+          <Property Name="tilId" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="t_tile" Relationship="Self.FKutiliser_FK" FromRole="t_protocole" ToRole="t_tile" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
+        </EntityType>
+        <EntityType Name="t_tile">
+          <Key>
+            <PropertyRef Name="tilId" />
+          </Key>
+          <Property Name="tilId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="tilPlant" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="tilDate" Type="DateTime" Nullable="false" />
+          <Property Name="tilPosition" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="jarId" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="t_jardin" Relationship="Self.FKinclure_FK" FromRole="t_tile" ToRole="t_jardin" />
+          <NavigationProperty Name="t_protocole" Relationship="Self.FKutiliser_FK" FromRole="t_tile" ToRole="t_protocole" />
+        </EntityType>
+        <Association Name="FKinclure_FK">
+          <End Role="t_jardin" Type="Self.t_jardin" Multiplicity="1" />
+          <End Role="t_tile" Type="Self.t_tile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="t_jardin">
+              <PropertyRef Name="jarId" />
+            </Principal>
+            <Dependent Role="t_tile">
+              <PropertyRef Name="jarId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKutiliser_FK">
+          <End Role="t_tile" Type="Self.t_tile" Multiplicity="1" />
+          <End Role="t_protocole" Type="Self.t_protocole" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="t_tile">
+              <PropertyRef Name="tilId" />
+            </Principal>
+            <Dependent Role="t_protocole">
+              <PropertyRef Name="tilId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="db_gmEntities4" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="t_jardin" EntityType="Self.t_jardin" />
+          <EntitySet Name="t_protocole" EntityType="Self.t_protocole" />
+          <EntitySet Name="t_tile" EntityType="Self.t_tile" />
+          <AssociationSet Name="FKinclure_FK" Association="Self.FKinclure_FK">
+            <End Role="t_jardin" EntitySet="t_jardin" />
+            <End Role="t_tile" EntitySet="t_tile" />
+          </AssociationSet>
+          <AssociationSet Name="FKutiliser_FK" Association="Self.FKutiliser_FK">
+            <End Role="t_tile" EntitySet="t_tile" />
+            <End Role="t_protocole" EntitySet="t_protocole" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="db_gmModel1StoreContainer" CdmEntityContainer="db_gmEntities4">
+          <EntitySetMapping Name="t_jardin">
+            <EntityTypeMapping TypeName="db_gmModel1.t_jardin">
+              <MappingFragment StoreEntitySet="t_jardin">
+                <ScalarProperty Name="jarId" ColumnName="jarId" />
+                <ScalarProperty Name="jarName" ColumnName="jarName" />
+                <ScalarProperty Name="jarDisposition" ColumnName="jarDisposition" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="t_protocole">
+            <EntityTypeMapping TypeName="db_gmModel1.t_protocole">
+              <MappingFragment StoreEntitySet="t_protocole">
+                <ScalarProperty Name="proId" ColumnName="proId" />
+                <ScalarProperty Name="proTask" ColumnName="proTask" />
+                <ScalarProperty Name="proDateTask" ColumnName="proDateTask" />
+                <ScalarProperty Name="proIsDone" ColumnName="proIsDone" />
+                <ScalarProperty Name="proToDo" ColumnName="proToDo" />
+                <ScalarProperty Name="tilId" ColumnName="tilId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="t_tile">
+            <EntityTypeMapping TypeName="db_gmModel1.t_tile">
+              <MappingFragment StoreEntitySet="t_tile">
+                <ScalarProperty Name="tilId" ColumnName="tilId" />
+                <ScalarProperty Name="tilPlant" ColumnName="tilPlant" />
+                <ScalarProperty Name="tilDate" ColumnName="tilDate" />
+                <ScalarProperty Name="tilPosition" ColumnName="tilPosition" />
+                <ScalarProperty Name="jarId" ColumnName="jarId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="true" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Aucun" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

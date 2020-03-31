@@ -1,0 +1,73 @@
+﻿@model GardenManager.Models.t_jardin
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+<p>Aménager votre potager et enregistrer le</p>
+
+<div id="gardenManager">
+    <div id="plantsSection">
+        <div id="plantsListTitle">
+            <h2>Plantes disponibles</h2>
+        </div>
+        <div id="plantsContainer">
+            @Html.Partial("plantsList")
+        </div>
+    </div>
+    <div id="garden">
+        <div class="tiles" id="0-0"></div>
+        <div class="tiles" id="0-1"></div>
+        <div class="tiles" id="0-2"></div>
+        <div class="tiles" id="1-0"></div>
+        <div class="tiles" id="1-1"></div>
+        <div class="tiles" id="1-2"></div>
+        <div class="tiles" id="2-0"></div>
+        <div class="tiles" id="2-1"></div>
+        <div class="tiles" id="2-2"></div>
+    </div>
+</div>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>t_jardin</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @Html.HiddenFor(model => model.jarDisposition, new { id = "jarDisposition" })
+        @Html.ValidationMessageFor(model => model.jarDisposition, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.jarName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.jarName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.jarName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" onclick="test()" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    function test() {
+
+    var data="";
+    const gardenTiles = document.querySelectorAll('.tiles');
+    for (const tile of gardenTiles) {
+        data += tile.id +','+ tile.textContent +'X';
+    }
+        var data = data.slice(0, -1);
+    document.getElementById("jarDisposition").value = data;
+        
+    }
+
+</script>
+

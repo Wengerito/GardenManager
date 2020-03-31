@@ -1,0 +1,55 @@
+﻿@model GardenManager.Models.t_plante
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Suppression</h2>
+
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        @*<dt>
+            @Html.DisplayNameFor(model => model.plaId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.plaId)
+        </dd>*@
+
+        <dt>
+            Confirmer la suppression de:
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.plaName)
+        </dd>
+
+        @*<dt>
+            @Html.DisplayNameFor(model => model.plaType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.plaType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.plaProtocol)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.plaProtocol)
+        </dd>*@
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

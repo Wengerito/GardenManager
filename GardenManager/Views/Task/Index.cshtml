@@ -1,0 +1,45 @@
+﻿@model IEnumerable<GardenManager.Models.t_tache>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.tacId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.tacName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.tacDetails)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.tacId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.tacName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.tacDetails)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.tacId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.tacId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.tacId })
+        </td>
+    </tr>
+}
+
+</table>

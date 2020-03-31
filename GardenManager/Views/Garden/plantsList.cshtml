@@ -1,0 +1,89 @@
+﻿@Scripts.Render("~/bundles/jquery")
+<script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+<script>
+    $(document).ready(function () {
+        // Get the data
+        var plantRequest = new XMLHttpRequest();
+        plantRequest.open('GET', 'plantsList');
+        plantRequest.onload = function () {
+            if (plantRequest.status >= 200 && plantRequest.status < 400) {
+                var data = JSON.parse(plantRequest.responseText);
+                createHTML(data);
+            } else {
+                console.log("erreur JSON:" + plantRequest.status);
+                createHTMLerror();
+            }
+        };
+        plantRequest.onerror = function () {
+            console.log("connexion erreur");
+        };
+        plantRequest.send();
+
+        // Error message
+        function createHTMLerror() {
+            plantsContainer.innerHTML = "Oupss... try to reload";
+        }
+        // Generate HTML with the data
+        function createHTML(plantsData) {
+            var rawTemplate = document.getElementById("plantsTemplate").innerHTML;
+            var compiledTemplate = Handlebars.compile(rawTemplate);
+            var ourGeneratedHTML = compiledTemplate(plantsData);
+
+            var plantsContainer = document.getElementById("plantsContainer");
+            plantsContainer.innerHTML += ourGeneratedHTML;
+            
+            //Drag and Drop
+            // Items
+            const fills = $("#plantsContainer").children();
+
+            for (const fill of fills) {
+                fill.addEventListener('dragstart', dragStart);
+                fill.addEventListener('dragend', dragEnd);
+            }
+            var dragged;
+
+        }
+
+        
+        function dragStart() {
+            dragged = this.innerHTML;
+            this.className += ' hold';
+        }
+        function dragEnd() {
+            this.className='plantItem'
+        }
+
+        // Destinations
+        const empties = document.querySelectorAll('.tiles');
+        for (const empty of empties) {
+            empty.addEventListener('dragover', dragOver);
+            empty.addEventListener('dragenter', dragEnter);
+            empty.addEventListener('dragleave', dragLeave);
+            empty.addEventListener('drop', dragDrop);
+        }
+        function dragOver(e) {
+            e.preventDefault();
+        }
+        function dragEnter(e) {
+            e.preventDefault();
+            this.className += ' hovered';
+        }
+        function dragLeave() {
+            this.className ='tiles';
+        }
+        function dragDrop() {
+            this.className = 'tiles';
+            this.innerHTML=dragged;
+        }
+    });
+</script>
+
+@*Template Handlebar*@
+<script id="plantsTemplate" type="text/x-handlebars-template">
+    
+        {{#each .}}
+        <div class="plantItem" draggable="true">{{plaName}}</div>
+        {{/each}}
+    
+</script>
+

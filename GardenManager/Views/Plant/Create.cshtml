@@ -43,21 +43,44 @@
         @Html.HiddenFor(model => model.plaProtocol, new { id = "plaProtocol" })
         @Html.ValidationMessageFor(model => model.plaProtocol, "", new { @class = "text-danger" })
 
-        <div>
+        <div style="display:inline-flex">
             <div id="tasksContainer">
             </div>
-            <select id="slctMode">
-                <option value="tou(te)s les">tou(te)s les</option>
-                <option value="après">après</option>
-            </select>
-            <select id="slctNbr">
-                <option value="1">1</option>
-                <option value="2">2</option>
-            </select>
-            <select id="slctTimeUnit">
-                <option value="jours">jours</option>
-                <option value="semaines">semaine</option>
-            </select>
+            <div>
+                <select id="slctMode">
+                    <option value="tou(te)s les">tou(te)s les</option>
+                    <option value="après">après</option>
+                    <option value="en">en</option>
+                </select>
+            </div>
+            <div>
+                <select id="slctNbr">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
+            </div>
+            <div>
+                <select id="slctTimeUnit">
+                    <option value="jours">jours</option>
+                    <option value="semaines">semaine</option>
+                    <option value="mois">mois</option>
+                </select>
+            </div>
+            <div>
+                <select id="slctMonth" hidden>
+                    <option value="janvier">janvier</option>
+                    <option value="février">février</option>
+                    <option value="mars">mars</option>
+                </select>
+            </div>
             <input id="btnAdd" type="button" value="+">
         </div>
 
@@ -109,21 +132,27 @@
         }
     });
 
-    //Eventlistener to add tasks to protocol
+    //EventListerner to handle first task
+    const slctMode = document.getElementById("slctMode");
+    slctMode.addEventListener('change', selectMode);
+
+    //Change dropdown lists
+    function selectMode() {
+        if (slctMode.value=="en") {
+            document.getElementById("slctNbr").hidden = true;
+            document.getElementById("slctTimeUnit").hidden = true;
+            document.getElementById("slctMonth").hidden = false;
+        }
+        else {
+            document.getElementById("slctNbr").hidden = false;
+            document.getElementById("slctTimeUnit").hidden = false;
+            document.getElementById("slctMonth").hidden = true;
+        }
+    }
+
+    //EventListener to add tasks to protocol
     const button = document.getElementById("btnAdd");
     button.addEventListener('click', addProt);
-
-    //Create the protocol string before submitting
-    function createProtocol() {
-        var data = "1) ";
-
-        document.getElementById("plaProtocol").value = data;
-    }
-
-    function refreshProtocol() {
-        var data =
-            document.getElementById("tmpProtocole").value = data;
-    }
 
     //Add tasks to protocol
     function addProt() {
@@ -137,6 +166,20 @@
         newProt.appendChild(textNode);
         document.getElementById("protList").appendChild(newProt);
     }
+
+    //Create the protocol string before submitting
+    function createProtocol() {
+        var data = "1) ";
+
+        document.getElementById("plaProtocol").value = data;
+    }
+
+    function refreshProtocol() {
+        var data =
+            document.getElementById("tmpProtocole").value = data;
+    }
+
+    
 </script>
 
 @*Template dropdown Handlebar*@

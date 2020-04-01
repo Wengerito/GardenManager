@@ -36,9 +36,11 @@
             <label class="control-label col-md-2">Protocole</label>
             <div class="col-md-10">
                 <input class="form-control" id="tmpProtocole" type="text" readonly="readonly" />
+                <input id="btnTmpProt" type="button" value="apercu">
             </div>
             <div id="protList">
             </div>
+            <input id="btnRem" type="button" value="-">
         </div>
         @Html.HiddenFor(model => model.plaProtocol, new { id = "plaProtocol" })
         @Html.ValidationMessageFor(model => model.plaProtocol, "", new { @class = "text-danger" })
@@ -48,7 +50,7 @@
             </div>
             <div>
                 <select id="slctMode">
-                    <option value="tou(te)s les">tou(te)s les</option>
+                    <option value="chaque">tou(te)s les</option>
                     <option value="après">après</option>
                     <option value="en">en</option>
                 </select>
@@ -79,14 +81,25 @@
                     <option value="janvier">janvier</option>
                     <option value="février">février</option>
                     <option value="mars">mars</option>
+                    <option value="avril">avril</option>
+                    <option value="mai">mai</option>
+                    <option value="juin">juin</option>
+                    <option value="juillet">juillet</option>
+                    <option value="août">août</option>
+                    <option value="septembre">septembre</option>
+                    <option value="octobre">octobre</option>
+                    <option value="novembre">novembre</option>
+                    <option value="décembre">décembre</option>
                 </select>
             </div>
-            <input id="btnAdd" type="button" value="+">
+            <div>
+                <input id="btnAdd" type="button" value="+">
+            </div>
         </div>
 
         <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" onclick="createProtocol()" value="Create" class="btn btn-default" />
+            <div class="col-md-offset-5 col-md-10">
+                <input type="submit" onclick="submitProtocol()" value="Create" class="btn btn-primary" />
             </div>
         </div>
     </div>
@@ -151,32 +164,58 @@
     }
 
     //EventListener to add tasks to protocol
-    const button = document.getElementById("btnAdd");
-    button.addEventListener('click', addProt);
+    const buttonAdd = document.getElementById("btnAdd");
+    buttonAdd.addEventListener('click', addProt);
+
+    //EventListener to remove tasks from protocol
+    const buttonRem = document.getElementById("btnRem");
+    buttonRem.addEventListener('click', removeProt);
+
+    //EventListener for temporary protocol
+    const buttonTmp = document.getElementById("btnTmpProt");
+    buttonTmp.addEventListener('click', createProtocol);
 
     //Add tasks to protocol
     function addProt() {
         var newProt = document.createElement("P");
         var strProt = "";
         strProt += document.getElementById("slctTask").value + " ";
-        strProt += document.getElementById("slctMode").value + " ";
-        strProt += document.getElementById("slctNbr").value + " ";
-        strProt += document.getElementById("slctTimeUnit").value + " ";
-        var textNode = document.createTextNode(strProt);
+        if (document.getElementById("slctMode").value=="en") {
+            strProt += document.getElementById("slctMode").value + " ";
+            strProt += document.getElementById("slctMonth").value + " ";
+        }
+        else {
+            strProt += document.getElementById("slctMode").value + " ";
+            strProt += document.getElementById("slctNbr").value + " ";
+            strProt += document.getElementById("slctTimeUnit").value + " ";
+        }
+
+        var textNode = document.createTextNode(strProt.toLowerCase());
         newProt.appendChild(textNode);
         document.getElementById("protList").appendChild(newProt);
     }
 
-    //Create the protocol string before submitting
-    function createProtocol() {
-        var data = "1) ";
-
-        document.getElementById("plaProtocol").value = data;
+    //Remove tasks from protocol
+    function removeProt() {
+        var pList = document.getElementById("protList");
+        pList.removeChild(pList.lastElementChild);
     }
 
-    function refreshProtocol() {
-        var data =
-            document.getElementById("tmpProtocole").value = data;
+    //Create the protocol string before submitting
+    function createProtocol() {
+        var data = "";
+        var nbrOfTasks = document.getElementById("protList").childElementCount;
+        for (var i = 0; i < nbrOfTasks; i++) {
+            data += (i + 1).toString() + ") ";
+            data += document.getElementById("protList").children[i].textContent;
+        }
+        document.getElementById("tmpProtocole").value = data;
+
+    }
+
+    //Give the protocol string to form field
+    function submitProtocol() {
+        document.getElementById("plaProtocol").value = document.getElementById("tmpProtocole").value
     }
 
     

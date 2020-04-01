@@ -4,45 +4,28 @@
     ViewBag.Title = "Delete";
 }
 
-<h2>Delete</h2>
+<h2>Suppression</h2>
 
-<h3>Are you sure you want to delete this?</h3>
+<h3>Voulez-vous vraiment supprimer la tâche suivante? </h3>
 <div>
-    <h4>t_tache</h4>
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.tacId)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.tacId)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.tacName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.tacName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.tacDetails)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.tacDetails)
-        </dd>
-
-    </dl>
-
-    @using (Html.BeginForm()) {
+    <table class="table table-condensed">
+        <tr>
+            <th>Nom</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>@Html.DisplayFor(model => model.tacName)</td>
+            <td>@Html.DisplayFor(model => model.tacDetails)</td>
+        </tr>
+    </table>
+    @using (Html.BeginForm())
+    {
         @Html.AntiForgeryToken()
 
         <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-default" /> |
-            @Html.ActionLink("Back to List", "Index")
+            <input type="submit" value="Confirmer" class="btn btn-default" /> |
+            @Html.ActionLink("Annuler", "Index")
         </div>
     }
 </div>

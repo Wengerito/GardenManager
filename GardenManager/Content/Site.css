@@ -23,6 +23,38 @@ textarea {
     max-width: 280px;
 }
 
+/* Custom CSS for home page */
+.jumbotron {
+    animation-name: animBack;
+    animation-duration: 4s;
+    animation-iteration-count: infinite;
+    background-color: aquamarine;
+    overflow:hidden;
+}
+
+#leaf{
+   animation-name:animLeaf;
+   animation-duration:3s;
+   animation-iteration-count:infinite;
+}
+
+@keyframes animBack{
+    0% {
+        background-color: forestgreen;
+    }
+    50% {
+        background-color: greenyellow;
+    }
+    100% {
+        background-color: forestgreen;
+    }
+}
+
+@keyframes animLeaf{
+    from{top:-200px;transform:rotate(0deg)}
+    to{top:60px;transform:rotate(360deg)}
+}
+
 /* Custom CSS for garden page */
 #gardenManager {
     width: 100%;

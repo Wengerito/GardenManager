@@ -4,40 +4,36 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<h2>Tâches</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Nouvelle tâche", "Create", null, new { @class = "btn btn-primary" })
 </p>
-<table class="table">
+<table class="table-hover table-bordered">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.tacId)
+            Nom
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.tacName)
+            Description
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.tacDetails)
+            Actions
         </th>
-        <th></th>
     </tr>
 
 @foreach (var item in Model) {
     <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.tacId)
-        </td>
         <td>
             @Html.DisplayFor(modelItem => item.tacName)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.tacDetails)
         </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.tacId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.tacId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.tacId })
+        <td style="text-align-last:center">
+            @Html.ActionLink(" ", "Edit", new { id = item.tacId }, new { @class = "glyphicon glyphicon-pencil", title = "Modifier" })
+            <br />
+            @Html.ActionLink(" ", "Delete", new { id = item.tacId }, new { @class = "glyphicon glyphicon-remove", title = "Supprimer" })
         </td>
     </tr>
 }

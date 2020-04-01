@@ -6,50 +6,28 @@
 
 <h2>Suppression</h2>
 
-
+<h3>Voulez-vous vraiment supprimer la tâche suivante? </h3>
 <div>
     <hr />
-    <dl class="dl-horizontal">
-        @*<dt>
-            @Html.DisplayNameFor(model => model.plaId)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.plaId)
-        </dd>*@
-
-        <dt>
-            Confirmer la suppression de:
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.plaName)
-        </dd>
-
-        @*<dt>
-            @Html.DisplayNameFor(model => model.plaType)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.plaType)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.plaProtocol)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.plaProtocol)
-        </dd>*@
-
-    </dl>
-
-    @using (Html.BeginForm()) {
+    <table class="table table-condensed">
+        <tr>
+            <th>Nom</th>
+            <th>Type</th>
+            <th>Protocole</th>
+        </tr>
+        <tr>
+            <td>@Html.DisplayFor(model => model.plaName)</td>
+            <td>@Html.DisplayFor(model => model.plaType)</td>
+            <td>@Html.DisplayFor(model => model.plaProtocol)</td>
+        </tr>
+    </table>
+    @using (Html.BeginForm())
+    {
         @Html.AntiForgeryToken()
 
         <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-default" /> |
-            @Html.ActionLink("Back to List", "Index")
+            <input type="submit" value="Confirmer" class="btn btn-default" /> |
+            @Html.ActionLink("Annuler", "Index")
         </div>
     }
 </div>

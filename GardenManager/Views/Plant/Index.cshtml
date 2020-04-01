@@ -4,12 +4,12 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<h2>Plantes</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create",null,new { @class = "btn btn-primary" })
+    @Html.ActionLink("Nouvelle plante", "Create",null,new { @class = "btn btn-primary" })
 </p>
-<table class="table">
+<table class="table-hover table-bordered">
     <tr>
         <th>
             Nom
@@ -20,7 +20,9 @@
         <th>
             Protocole
         </th>
-        <th></th>
+        <th>
+            Actions
+        </th>
     </tr>
 
 @foreach (var item in Model) {
@@ -34,10 +36,10 @@
         <td>
             @Html.DisplayFor(modelItem => item.plaProtocol)
         </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.plaId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.plaId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.plaId })
+        <td style="text-align-last:center">
+            @Html.ActionLink(" ", "Edit", new { id = item.plaId }, new { @class = "glyphicon glyphicon-pencil", title = "Modifier" })
+            <br />
+            @Html.ActionLink(" ", "Delete", new { id=item.plaId }, new { @class = "glyphicon glyphicon-remove", title = "Supprimer" }) 
         </td>
     </tr>
 }

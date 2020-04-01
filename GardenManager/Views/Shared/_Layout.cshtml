@@ -4,9 +4,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Mon application ASP.NET</title>
+    <title>@ViewBag.Title - Garden Manager</title>
     @Styles.Render("~/Content/css")
-    @Styles.Render("~/Content/Site.css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
@@ -22,12 +21,12 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Accueil", "Index", "Home")</li>
-                    <li>@Html.ActionLink("À propos de", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                    @*<li>@Html.ActionLink("Accueil", "Index", "Home")</li>*@
                     <li>@Html.ActionLink("Plantes", "Index", "Plant")</li>
                     <li>@Html.ActionLink("Tâches", "Index", "Task")</li>
                     <li>@Html.ActionLink("Mon jardin", "Index", "Garden")</li>
+                    <li>@Html.ActionLink("À propos de", "About", "Home")</li>
+                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
                 </ul>
             </div>
         </div>
@@ -35,11 +34,10 @@
     <div class="container body-content">
         @RenderBody()
         <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - ETML - Wenger Thomas</p>
-        </footer>
     </div>
-
+    <footer style="position:fixed;bottom:0;width:100%">
+        <p style="position:relative;text-align:center">&copy; @DateTime.Now.Year - ETML - Wenger Thomas</p>
+    </footer>
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)

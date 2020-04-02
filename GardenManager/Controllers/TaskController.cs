@@ -1,6 +1,7 @@
 ﻿using GardenManager.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -33,16 +34,23 @@ namespace GardenManager.Controllers
             return Json(taskList, JsonRequestBehavior.AllowGet);
         }
 
-        // GET: Task/Details/5
-        public ActionResult Details(int id)
-        {
-            t_tache task = new t_tache();
-            using (db_gmEntities1 dbModel = new db_gmEntities1())
-            {
-                task = dbModel.t_tache.Where(x => x.tacId == id).FirstOrDefault();
-            }
-            return View(task);
-        }
+        //// GET: Task/Details/5
+        //public ActionResult Details(int id)
+        //{
+        //    t_tache task = new t_tache();
+        //    using (db_gmEntities1 dbModel = new db_gmEntities1())
+        //    {
+        //        if (dbModel.t_tache.Any(x => x.tacId == id))
+        //        {
+        //            task = dbModel.t_tache.Where(x => x.tacId == id).FirstOrDefault();
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("Index");
+        //        }
+        //    }
+        //    return View(task);
+        //}
 
         // GET: Task/Create
         public ActionResult Create()
@@ -54,12 +62,40 @@ namespace GardenManager.Controllers
         [HttpPost]
         public ActionResult Create(t_tache task)
         {
+            if (string.IsNullOrEmpty(task.tacName))
+            {
+                ModelState.AddModelError("tacName", "Un nom de tâche est requis");
+            }
+            if (string.IsNullOrEmpty(task.tacDetails))
+            {
+                ModelState.AddModelError("tacDetails", "Une description de la tâche est requise");
+            }
+            if (task.tacName == task.tacDetails)
+            {
+                ModelState.AddModelError("tacDetails", "La description ne peut pas être le nom de la tâche");
+            }
             using (db_gmEntities1 dbModel = new db_gmEntities1())
             {
-                dbModel.t_tache.Add(task);
-                dbModel.SaveChanges();
+                if (dbModel.t_tache.Where(x => x.tacId != task.tacId).Any(x => x.tacName == task.tacName))
+                {
+                    ModelState.AddModelError("tacName", "Cette tâche existe déjà");
+                }
             }
-            return RedirectToAction("Index");
+
+            if (ModelState.IsValid)
+            {
+                using (db_gmEntities1 dbModel = new db_gmEntities1())
+                {
+                    dbModel.t_tache.Add(task);
+                    dbModel.SaveChanges();
+                }
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return View();
+            }
+            
         }
 
         // GET: Task/Edit/5
@@ -68,21 +104,57 @@ namespace GardenManager.Controllers
             t_tache task = new t_tache();
             using (db_gmEntities1 dbModel = new db_gmEntities1())
             {
-                task = dbModel.t_tache.Where(x => x.tacId == id).FirstOrDefault();
+                if (dbModel.t_tache.Any(x => x.tacId == id))
+                {
+                    task = dbModel.t_tache.Where(x => x.tacId == id).FirstOrDefault();
+                }
+                else
+                {
+                    return RedirectToAction("Index");
+                }
             }
             return View(task);
         }
 
         // POST: Task/Edit/5
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Edit(t_tache task)
         {
+            if (string.IsNullOrEmpty(task.tacName))
+            {
+                ModelState.AddModelError("tacName", "Un nom de tâche est requis");
+            }
+            if (string.IsNullOrEmpty(task.tacDetails))
+            {
+                ModelState.AddModelError("tacDetails", "Une description de la tâche est requise");
+            }
+            if (task.tacName==task.tacDetails)
+            {
+                ModelState.AddModelError("tacDetails", "La description ne peut pas être le nom de la tâche");
+            }
             using (db_gmEntities1 dbModel = new db_gmEntities1())
             {
-                dbModel.Entry(task).State = System.Data.EntityState.Modified;
-                dbModel.SaveChanges();
+                if (dbModel.t_tache.Where(x=>x.tacId!=task.tacId).Any(x => x.tacName == task.tacName))
+                {
+                    ModelState.AddModelError("tacName", "Cette tâche existe déjà");
+                }
             }
-            return RedirectToAction("Index");
+
+            if (ModelState.IsValid)
+            {
+                using (db_gmEntities1 dbModel = new db_gmEntities1())
+                {
+                    dbModel.Entry(task).State = System.Data.EntityState.Modified;
+                    dbModel.SaveChanges();
+                }
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return View();
+            }
+            
         }
 
         // GET: Task/Delete/5
@@ -91,7 +163,14 @@ namespace GardenManager.Controllers
             t_tache task = new t_tache();
             using (db_gmEntities1 dbModel = new db_gmEntities1())
             {
-                task = dbModel.t_tache.Where(x => x.tacId == id).FirstOrDefault();
+                if (dbModel.t_tache.Any(x => x.tacId == id))
+                {
+                    task = dbModel.t_tache.Where(x => x.tacId == id).FirstOrDefault();
+                }
+                else
+                {
+                    return RedirectToAction("Index");
+                }
             }
             return View(task);
         }

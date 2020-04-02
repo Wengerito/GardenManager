@@ -40,23 +40,24 @@
             </div>
             <div id="protList">
             </div>
-            <input id="btnRem" type="button" value="-">
+            <input id="btnRem" type="button" value="-" hidden>
         </div>
         @Html.HiddenFor(model => model.plaProtocol, new { id = "plaProtocol" })
         @Html.ValidationMessageFor(model => model.plaProtocol, "", new { @class = "text-danger" })
 
         <div style="display:inline-flex">
+            <p id="taskNbr">1)</p>
             <div id="tasksContainer">
             </div>
             <div>
                 <select id="slctMode">
+                    <option selected="selected" value="en">en</option>
                     <option value="chaque">tou(te)s les</option>
                     <option value="après">après</option>
-                    <option value="en">en</option>
                 </select>
             </div>
             <div>
-                <select id="slctNbr">
+                <select id="slctNbr" hidden>
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
@@ -70,14 +71,14 @@
                 </select>
             </div>
             <div>
-                <select id="slctTimeUnit">
+                <select id="slctTimeUnit" hidden>
                     <option value="jours">jours</option>
                     <option value="semaines">semaine</option>
                     <option value="mois">mois</option>
                 </select>
             </div>
             <div>
-                <select id="slctMonth" hidden>
+                <select id="slctMonth" >
                     <option value="janvier">janvier</option>
                     <option value="février">février</option>
                     <option value="mars">mars</option>
@@ -99,7 +100,7 @@
 
         <div class="form-group">
             <div class="col-md-offset-5 col-md-10">
-                <input type="submit" onclick="submitProtocol()" value="Create" class="btn btn-primary" />
+                <input type="submit" onclick="submitProtocol()" value="Créer" class="btn btn-primary" />
             </div>
         </div>
     </div>
@@ -112,6 +113,7 @@
 <script>
     //Get the tasks list
     $(document).ready(function () {
+        
         // Get the data
         var taskRequest = new XMLHttpRequest();
         taskRequest.open('GET', '../Task/tasksList');
@@ -175,6 +177,16 @@
     const buttonTmp = document.getElementById("btnTmpProt");
     buttonTmp.addEventListener('click', createProtocol);
 
+    // Handlebars helper to select "planter" as first task
+    Handlebars.registerHelper('ifeqPlanter', function (value) {
+        if (value=="Planter") {
+            return true;
+        }
+        else {
+            return false;
+        }
+    });
+
     //Add tasks to protocol
     function addProt() {
         var newProt = document.createElement("P");
@@ -193,12 +205,18 @@
         var textNode = document.createTextNode(strProt.toLowerCase());
         newProt.appendChild(textNode);
         document.getElementById("protList").appendChild(newProt);
+        document.getElementById("btnRem").hidden = false;
+        document.getElementById("taskNbr").innerText = document.getElementById("protList").childElementCount + 1 + ") ";
     }
 
     //Remove tasks from protocol
     function removeProt() {
         var pList = document.getElementById("protList");
         pList.removeChild(pList.lastElementChild);
+        document.getElementById("taskNbr").innerText = pList.childElementCount + 1 + ")";
+        if (pList.childElementCount==0) {
+            document.getElementById("btnRem").hidden = true;
+        }
     }
 
     //Create the protocol string before submitting
@@ -226,7 +244,11 @@
 
     <select id="slctTask">
         {{#each .}}
+        {{#if (ifeqPlanter tacName)}}
+        <option selected="selected" value={{tacName}}>{{tacName}}</option>
+        {{^}}
         <option value={{tacName}}>{{tacName}}</option>
+        {{/if}}
         {{/each}}
     </select>
 

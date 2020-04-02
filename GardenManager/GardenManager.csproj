@@ -343,11 +343,9 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Plant\Index.cshtml" />
     <Content Include="Views\Plant\Create.cshtml" />
-    <Content Include="Views\Plant\Details.cshtml" />
     <Content Include="Views\Plant\Delete.cshtml" />
     <Content Include="Views\Plant\Edit.cshtml" />
     <Content Include="Views\Task\Index.cshtml" />
-    <Content Include="Views\Task\Details.cshtml" />
     <Content Include="Views\Task\Create.cshtml" />
     <Content Include="Views\Task\Delete.cshtml" />
     <Content Include="Views\Task\Edit.cshtml" />

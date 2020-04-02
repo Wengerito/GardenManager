@@ -67,15 +67,15 @@
             console.log(data);
         }
 
-        // Handlebars helper to pass the name of the selected garden
-        Handlebars.registerHelper('selected', function () { return document.getElementById("gardens").value; });
+        //// Handlebars helper to pass the name of the selected garden
+        //Handlebars.registerHelper('selected', function () { return document.getElementById("gardens").value; });
 
 
-        // Handlebars helper to compare
-        Handlebars.registerHelper('ifeq', function (value, options) {
-            var selected = Handlebars.helpers.selected();
-            return (value == selected) ? options.fn(this) : '';
-        });
+        //// Handlebars helper to compare
+        //Handlebars.registerHelper('ifeq', function (value, options) {
+        //    var selected = Handlebars.helpers.selected();
+        //    return (value == selected) ? options.fn(this) : '';
+        //});
 
         // Handlebars helper for date formating
         Handlebars.registerHelper('formatDate', function (datetime) {

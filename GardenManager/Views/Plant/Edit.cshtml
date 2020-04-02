@@ -1,27 +1,23 @@
 ﻿@model GardenManager.Models.t_plante
+@Scripts.Render("~/bundles/jquery")
+<script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
 
 @{
     ViewBag.Title = "Edit";
 }
 
-<h2>Edit</h2>
+<h2>Modification</h2>
 
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
-        <h4>t_plante</h4>
+        <h4>Remplissez les champs pour modifier la plante</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group" hidden>
-            @Html.LabelFor(model => model.plaId, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.plaId, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.plaId, "", new { @class = "text-danger" })
-            </div>
-        </div>
+        @Html.HiddenFor(model => model.plaId)
 
         <div class="form-group">
             @Html.LabelFor(model => model.plaName, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -40,24 +36,226 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.plaProtocol, htmlAttributes: new { @class = "control-label col-md-2" })
+            <label class="control-label col-md-2">Protocole</label>
             <div class="col-md-10">
-                @Html.EditorFor(model => model.plaProtocol, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.plaProtocol, "", new { @class = "text-danger" })
+                <input class="form-control" id="tmpProtocole" type="text" readonly="readonly" />
+                <input id="btnTmpProt" type="button" value="Appliquer">
+            </div>
+            <div id="protList">
+            </div>
+            <input id="btnRem" type="button" value="-" hidden>
+        </div>
+        @Html.HiddenFor(model => model.plaProtocol, new { id = "plaProtocol" })
+        @Html.ValidationMessageFor(model => model.plaProtocol, "", new { @class = "text-danger" })
+
+        <div style="display:inline-flex">
+            <p id="taskNbr">1)</p>
+            <div id="tasksContainer">
+            </div>
+            <div>
+                <select id="slctMode">
+                    <option selected="selected" value="en">en</option>
+                    <option value="chaque">tou(te)s les</option>
+                    <option value="après">après</option>
+                </select>
+            </div>
+            <div>
+                <select id="slctNbr" hidden>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
+            </div>
+            <div>
+                <select id="slctTimeUnit" hidden>
+                    <option value="jours">jours</option>
+                    <option value="semaines">semaine</option>
+                    <option value="mois">mois</option>
+                </select>
+            </div>
+            <div>
+                <select id="slctMonth">
+                    <option value="janvier">janvier</option>
+                    <option value="février">février</option>
+                    <option value="mars">mars</option>
+                    <option value="avril">avril</option>
+                    <option value="mai">mai</option>
+                    <option value="juin">juin</option>
+                    <option value="juillet">juillet</option>
+                    <option value="août">août</option>
+                    <option value="septembre">septembre</option>
+                    <option value="octobre">octobre</option>
+                    <option value="novembre">novembre</option>
+                    <option value="décembre">décembre</option>
+                </select>
+            </div>
+            <div>
+                <input id="btnAdd" type="button" value="+">
             </div>
         </div>
 
         <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+            <div class="col-md-offset-5 col-md-10">
+                <input type="submit" onclick="submitProtocol()" value="Enregistrer" class="btn btn-primary" />
             </div>
         </div>
     </div>
+
 }
 
 <div>
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Retour", "Index")
 </div>
+<script>
+    //Get the tasks list
+    $(document).ready(function () {
+
+        // Get the data
+        var taskRequest = new XMLHttpRequest();
+        taskRequest.open('GET', '../../Task/tasksList');
+        taskRequest.onload = function () {
+            if (taskRequest.status >= 200 && taskRequest.status < 400) {
+                var data = JSON.parse(taskRequest.responseText);
+                createHTML(data);
+            } else {
+                console.log("erreur JSON:" + taskRequest.status);
+                createHTMLerror();
+            }
+        };
+        taskRequest.onerror = function () {
+            console.log("connexion erreur");
+        };
+        taskRequest.send();
+
+        // Error message
+        function createHTMLerror() {
+            var tasksContainer = document.getElementById("tasksContainer");
+            tasksContainer.innerHTML = "Oupss... try to reload";
+        }
+        // Generate HTML with the data (dropdownlist)
+        function createHTML(tasksData) {
+            var rawTemplate = document.getElementById("tasksDropDownTemplate").innerHTML;
+            var compiledTemplate = Handlebars.compile(rawTemplate);
+            var ourGeneratedHTML = compiledTemplate(tasksData);
+
+            var tasksContainer = document.getElementById("tasksContainer");
+            tasksContainer.innerHTML += ourGeneratedHTML;
+        }
+    });
+
+    //EventListerner to handle first task
+    const slctMode = document.getElementById("slctMode");
+    slctMode.addEventListener('change', selectMode);
+
+    //Change dropdown lists
+    function selectMode() {
+        if (slctMode.value == "en") {
+            document.getElementById("slctNbr").hidden = true;
+            document.getElementById("slctTimeUnit").hidden = true;
+            document.getElementById("slctMonth").hidden = false;
+        }
+        else {
+            document.getElementById("slctNbr").hidden = false;
+            document.getElementById("slctTimeUnit").hidden = false;
+            document.getElementById("slctMonth").hidden = true;
+        }
+    }
+
+    //EventListener to add tasks to protocol
+    const buttonAdd = document.getElementById("btnAdd");
+    buttonAdd.addEventListener('click', addProt);
+
+    //EventListener to remove tasks from protocol
+    const buttonRem = document.getElementById("btnRem");
+    buttonRem.addEventListener('click', removeProt);
+
+    //EventListener for temporary protocol
+    const buttonTmp = document.getElementById("btnTmpProt");
+    buttonTmp.addEventListener('click', createProtocol);
+
+    // Handlebars helper to select "planter" as first task
+    Handlebars.registerHelper('ifeqPlanter', function (value) {
+        if (value == "Planter") {
+            return true;
+        }
+        else {
+            return false;
+        }
+    });
+
+    //Add tasks to protocol
+    function addProt() {
+        var newProt = document.createElement("P");
+        var strProt = "";
+        strProt += document.getElementById("slctTask").value + " ";
+        if (document.getElementById("slctMode").value == "en") {
+            strProt += document.getElementById("slctMode").value + " ";
+            strProt += document.getElementById("slctMonth").value + " ";
+        }
+        else {
+            strProt += document.getElementById("slctMode").value + " ";
+            strProt += document.getElementById("slctNbr").value + " ";
+            strProt += document.getElementById("slctTimeUnit").value + " ";
+        }
+
+        var textNode = document.createTextNode(strProt.toLowerCase());
+        newProt.appendChild(textNode);
+        document.getElementById("protList").appendChild(newProt);
+        document.getElementById("btnRem").hidden = false;
+        document.getElementById("taskNbr").innerText = document.getElementById("protList").childElementCount + 1 + ") ";
+    }
+
+    //Remove tasks from protocol
+    function removeProt() {
+        var pList = document.getElementById("protList");
+        pList.removeChild(pList.lastElementChild);
+        document.getElementById("taskNbr").innerText = pList.childElementCount + 1 + ")";
+        if (pList.childElementCount == 0) {
+            document.getElementById("btnRem").hidden = true;
+        }
+    }
+
+    //Create the protocol string before submitting
+    function createProtocol() {
+        var data = "";
+        var nbrOfTasks = document.getElementById("protList").childElementCount;
+        for (var i = 0; i < nbrOfTasks; i++) {
+            data += (i + 1).toString() + ") ";
+            data += document.getElementById("protList").children[i].textContent;
+        }
+        document.getElementById("tmpProtocole").value = data;
+
+    }
+
+    //Give the protocol string to form field
+    function submitProtocol() {
+        document.getElementById("plaProtocol").value = document.getElementById("tmpProtocole").value
+    }
+
+
+</script>
+
+@*Template dropdown Handlebar*@
+<script id="tasksDropDownTemplate" type="text/x-handlebars-template">
+
+    <select id="slctTask">
+        {{#each .}}
+        {{#if (ifeqPlanter tacName)}}
+        <option selected="selected" value={{tacName}}>{{tacName}}</option>
+        {{^}}
+        <option value={{tacName}}>{{tacName}}</option>
+        {{/if}}
+        {{/each}}
+    </select>
+
+</script>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
